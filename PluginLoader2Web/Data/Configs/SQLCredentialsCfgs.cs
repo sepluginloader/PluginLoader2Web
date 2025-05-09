@@ -1,6 +1,6 @@
 ﻿namespace PluginLoader2Web.Data.Configs
 {
-    public class SQLCredentials
+    public class SQLCredentialsCfgs
     {
 
         public string SQLHost { get; set; } = "localhost";

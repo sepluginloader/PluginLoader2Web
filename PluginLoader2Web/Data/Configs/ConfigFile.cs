@@ -10,7 +10,9 @@ namespace PluginLoader2Web.Data.Configs
     {
         private string filePath;
 
-        public SQLCredentials WebServer { get; set; } = new SQLCredentials();
+        public SQLCredentialsCfgs WebServer { get; set; } = new SQLCredentialsCfgs();
+
+        public GithubOAuthCfgs GithubOAuth { get; set; } = new GithubOAuthCfgs();
 
         public Task SaveAsync()
         {

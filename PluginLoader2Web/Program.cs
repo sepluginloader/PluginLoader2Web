@@ -20,7 +20,7 @@ namespace PluginLoader2Web
         public static async Task Main(string[] args)
         {
             WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
-
+           
 
             MainConfigs = await ConfigFile.TryLoadAsync(Path.Combine(AppFolder, "ServerConfigs.toml"));
             
@@ -64,13 +64,19 @@ namespace PluginLoader2Web
                    options.LoginPath = "/Login";
                    options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
                    options.AccessDeniedPath = "/Account/AccessDenied";
-               }).AddGitHub()
+               }).AddGitHub(githubOptions =>
+               {
+                   githubOptions.ClientId = MainConfigs.GithubOAuth.ClientID;
+                   githubOptions.ClientSecret = MainConfigs.GithubOAuth.ClientSecret;
+                   githubOptions.Scope.Add("user:email");
+                   githubOptions.SaveTokens = true;
+               });
 
 
 
 
 
-           var app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
