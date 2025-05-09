@@ -1,4 +1,8 @@
 ﻿@page "/"
+@using System.Security.Claims
+
+@inject AuthenticationStateProvider authProvider
+
 
 <PageTitle>Home</PageTitle>
 
@@ -56,3 +60,52 @@
         More details
     </MudLink>
 </MudText>
+
+<AuthorizeView>
+    <Authorized>
+        <MudText Typo="Typo.h6" GutterBottom="true">Welcome back, @context.User.Identity.Name!</MudText>
+        <MudText Typo="Typo.body2">
+            You are logged in. You can now access the full features of this application.
+        </MudText>
+        <MudAvatar>
+            <MudImage Src="@_avatarLink"></MudImage>
+        </MudAvatar>
+    </Authorized>
+    <NotAuthorized>
+        <MudText Typo="Typo.h6" GutterBottom="true">Hello, Guest!</MudText>
+        <MudText Typo="Typo.body2">
+            You are not logged in. Please log in to access the full features of this application.
+        </MudText>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+<PluginLoader2Web.Components.Account.ExternalLogin />
+
+@code {
+    private string _avatarLink = "https://www.gravatar.com/avatar/";
+    private IEnumerable<Claim> _userClaims;
+
+    protected override async Task OnInitializedAsync()
+    {
+        //Hello
+
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _userClaims = user.Claims;
+
+            _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
+        }
+
+
+
+
+
+    }
+
+}

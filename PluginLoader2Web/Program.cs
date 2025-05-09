@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using PluginLoader2Web.Components;
+using PluginLoader2Web.Components.Account;
 using PluginLoader2Web.Data;
 using PluginLoader2Web.Data.Configs;
 using System.Reflection;
@@ -31,7 +32,7 @@ namespace PluginLoader2Web
 
         }
 
-        public static async Task BuildServicesAsync(WebApplicationBuilder? builder, string[] args)
+        public static async Task BuildServicesAsync(WebApplicationBuilder builder, string[] args)
         {
     
 
@@ -62,7 +63,7 @@ namespace PluginLoader2Web
                {
                    options.Cookie.Name = "authToken";
                    options.LoginPath = "/Login";
-                   options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                   options.ExpireTimeSpan = TimeSpan.FromMinutes(1);
                    options.AccessDeniedPath = "/Account/AccessDenied";
                }).AddGitHub(githubOptions =>
                {
@@ -70,6 +71,7 @@ namespace PluginLoader2Web
                    githubOptions.ClientSecret = MainConfigs.GithubOAuth.ClientSecret;
                    githubOptions.Scope.Add("user:email");
                    githubOptions.SaveTokens = true;
+                   
                });
 
 
@@ -108,6 +110,7 @@ namespace PluginLoader2Web
                 await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().SaveChangesAsync();
             }
 
+            app.MapAdditionalIdentityEndpoints();
             app.Run();
         }
     }

@@ -1,4 +1,40 @@
 ﻿@inherits LayoutComponentBase
 
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+
 @Body
 
+@code {
+
+
+
+    private bool _drawerOpen = true;
+    private MudTheme _theme = new();
+
+    private bool _isDarkMode = true;
+    private MudThemeProvider _mudThemeProvider;
+
+
+    private bool _SetupComplete = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
+        }
+    }
+
+
+
+
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+
+}
