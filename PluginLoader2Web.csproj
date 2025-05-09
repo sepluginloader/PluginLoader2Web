@@ -8,8 +8,11 @@
 
 
   <ItemGroup>
+    <PackageReference Include="FluentMigrator.Runner.Core" Version="7.1.0" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="7.1.0" />
     <PackageReference Include="MudBlazor" Version="7.*" />
     <PackageReference Include="Npgsql" Version="9.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Tomlyn" Version="0.19.0" />
   </ItemGroup>
 </Project>
