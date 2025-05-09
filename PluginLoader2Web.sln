@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginLoader2Web", "PluginLoader2Web.csproj", "{4DABBDAC-C17E-4147-AD2C-9C6B3DFC44C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginLoader2Web", "PluginLoader2Web\PluginLoader2Web.csproj", "{10807FC5-16A1-3808-E835-CA8AF278D2D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4DABBDAC-C17E-4147-AD2C-9C6B3DFC44C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4DABBDAC-C17E-4147-AD2C-9C6B3DFC44C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4DABBDAC-C17E-4147-AD2C-9C6B3DFC44C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4DABBDAC-C17E-4147-AD2C-9C6B3DFC44C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10807FC5-16A1-3808-E835-CA8AF278D2D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10807FC5-16A1-3808-E835-CA8AF278D2D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10807FC5-16A1-3808-E835-CA8AF278D2D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10807FC5-16A1-3808-E835-CA8AF278D2D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
