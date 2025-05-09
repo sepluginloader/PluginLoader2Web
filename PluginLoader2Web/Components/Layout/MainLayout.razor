@@ -1,30 +1,86 @@
 ﻿@inherits LayoutComponentBase
 
-<MudThemeProvider />
+
+<MudThemeProvider @ref="@_mudThemeProvider" Theme="@_themeManager.Theme" @bind-IsDarkMode="@_isDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
 
-@Body
+
+<MudLayout>
+    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
+    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" IsDarkMode="@_isDarkMode" />
+
+
+
+
+
+
+
+
+    <MudAppBar Elevation="_themeManager.AppBarElevation">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        <MudButton Variant="Variant.Text">Getting Started</MudButton>
+        <MudButton Variant="Variant.Text">Plugins</MudButton>
+        <MudButton Variant="Variant.Text">Docs</MudButton>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+
+        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+    </MudAppBar>
+
+    <MudMainContent Class="mt-16 pa-4">
+
+        @if (_LoadingData)
+        {
+            <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999">
+                <MudProgressCircular Color="Color.Secondary" Indeterminate="true" />
+            </MudOverlay>
+        }
+        else
+        {
+            @Body
+        }
+
+   
+
+
+    </MudMainContent>
+
+</MudLayout>
 
 @code {
 
-
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
+    public bool _themeManagerOpen = false;
 
     private bool _drawerOpen = true;
-    private MudTheme _theme = new();
+    private MudTheme _theme = new MudTheme()
+        {
+            PaletteDark = new PaletteDark()
+            {
+                Primary = "#6200EE",
+                Secondary = "#03DAC6",
+                Background = "#F5F5F5",
+                AppbarBackground = "#6200EE",
+                AppbarText = "#FFFFFF",
+            },
+
+
+        };
 
     private bool _isDarkMode = true;
     private MudThemeProvider _mudThemeProvider;
 
 
-    private bool _SetupComplete = true;
+    private bool _LoadingData = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+
+            _LoadingData = false;
             StateHasChanged();
         }
     }
@@ -35,6 +91,23 @@
     private void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+
+    void OpenThemeManager(bool value)
+    {
+        _themeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
     }
 
 }

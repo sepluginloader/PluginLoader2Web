@@ -1,111 +1,182 @@
 ﻿@page "/"
-@using System.Security.Claims
-
-@inject AuthenticationStateProvider authProvider
-
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor and the .NET 8 Template!</MudText>
-
-<MudAlert Severity="Severity.Normal">
-    You can find documentation and examples on our website here:
-    <MudLink Href="https://mudblazor.com" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        <b>www.mudblazor.com</b>
-    </MudLink>
-</MudAlert>
-
-<br />
-<MudText Typo="Typo.h5" GutterBottom="true">Interactivity in this Template</MudText>
-<br />
-<MudText Typo="Typo.body2">
-    When you opt for the "Global" Interactivity Location, <br />
-    the render modes are defined in App.razor and consequently apply to all child components.<br />
-    In this case, providers are globally set in the MainLayout.<br />
-    <br />
-    On the other hand, if you choose the "Per page/component" Interactivity Location,<br />
-    it is necessary to include the <br />
-    <br />
-    &lt;MudPopoverProvider /&gt; <br />
-    &lt;MudDialogProvider /&gt; <br />
-    &lt;MudSnackbarProvider /&gt; <br />
-    <br />
-    components on every interactive page.<br />
-    <br />
-    If a render mode is not specified for a page, it defaults to Server-Side Rendering (SSR),<br />
-    similar to this page. While MudBlazor allows pages to be rendered in SSR,<br />
-    please note that interactive features, such as buttons and dropdown menus, will not be functional.
-</MudText>
-
-<br />
-<MudText Typo="Typo.h5" GutterBottom="true">What's New in Blazor with the Release of .NET 8</MudText>
-<br />
-<MudText Typo="Typo.h6" GutterBottom="true">Prerendering</MudText>
-<MudText Typo="Typo.body2" GutterBottom="true">
-    If you're exploring the features of .NET 8 Blazor,<br /> you might be pleasantly surprised to learn that each page is prerendered on the server,<br /> regardless of the selected render mode.<br /><br />
-    This means that you'll need to inject all necessary services on the server,<br /> even when opting for the wasm (WebAssembly) render mode.<br /><br />
-    This prerendering functionality is crucial to ensuring that WebAssembly mode feels fast and responsive,<br /> especially when it comes to initial page load times.<br /><br />
-    For more information on how to detect prerendering and leverage the RenderContext, you can refer to the following link:
-    <MudLink Href="https://github.com/dotnet/aspnetcore/issues/51468#issuecomment-1783568121" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        More details
-    </MudLink>
-</MudText>
-
-<br />
-<MudText Typo="Typo.h6" GutterBottom="true">InteractiveAuto</MudText>
-<MudText Typo="Typo.body2">
-    A discussion on how to achieve this can be found here:
-    <MudLink Href="https://github.com/dotnet/aspnetcore/issues/51468#issue-1950424116" Target="_blank" Typo="Typo.body2" Color="Color.Primary">
-        More details
-    </MudLink>
-</MudText>
-
-<AuthorizeView>
-    <Authorized>
-        <MudText Typo="Typo.h6" GutterBottom="true">Welcome back, @context.User.Identity.Name!</MudText>
-        <MudText Typo="Typo.body2">
-            You are logged in. You can now access the full features of this application.
-        </MudText>
-        <MudAvatar>
-            <MudImage Src="@_avatarLink"></MudImage>
-        </MudAvatar>
-    </Authorized>
-    <NotAuthorized>
-        <MudText Typo="Typo.h6" GutterBottom="true">Hello, Guest!</MudText>
-        <MudText Typo="Typo.body2">
-            You are not logged in. Please log in to access the full features of this application.
-        </MudText>
-
-    </NotAuthorized>
-</AuthorizeView>
+<MudMainContent>
 
 
 
-<PluginLoader2Web.Components.Account.ExternalLogin />
+
+
+    <MudContainer Class="my-16" MaxWidth="MaxWidth.Large">
+        <MudGrid Spacing="10">
+
+            <MudItem xs="12">
+                
+                <div>
+                    <MudText Typo="Typo.h1">
+                        The Space Engineers <MudText Typo="Typo.h1" Inline="false" Color="Color.Primary">Plugin Loader</MudText>
+                    </MudText>
+
+
+                     <Animate Animation="Animations.FadeIn" Duration="TimeSpan.FromSeconds(1.5)">
+                    <MudText Typo="Typo.h5" Class="mud-text-secondary ml-2 my-2 ">
+                        <i>@RandomInroMessage</i>
+
+                    </MudText>
+                    </Animate>
+
+                    <div class="px-2 mt-8">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" DropShadow="false" Class="px-6" Href="/snippet">Download now</MudButton>
+                    </div>
+                </div>
+
+
+               
+            </MudItem>
+
+            <MudItem xs="12">
+                <MudText Typo="Typo.h2" Class="my-5">Smooth Coding</MudText>
+                <MudText Typo="Typo.h5" Class="mud-text-secondary">
+                    Play with MudBlazor components entirely in the browser. Test and experiment anytime, anywhere.
+                </MudText>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Large" Class="ml-n2" Href="/snippet" EndIcon="@Icons.Material.Filled.East">Get started</MudButton>
+                <MudPaper Elevation="25" Class="rounded-lg mt-12">
+                    <div class="d-flex align-center py-2 try-mudblazor-codecard rounded-t-lg">
+                        <div class="flex-grow-0 px-1">
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Size="Size.Small" Class="pa-2" Disabled="true" />
+                            <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" Size="Size.Small" Class="pa-2" Disabled="true" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Refresh" Size="Size.Small" Class="pa-2 d-none d-sm-inline" Disabled="true" />
+                        </div>
+                        <div class="d-flex flex-grow-1 justify-center mx-sm-16 px-sm-16 pl-4 pr-8">
+                            <MudPaper Outlined="true" Class="flex-grow-1 py-1 px-2">
+                                <MudText Align="Align.Center" Typo="Typo.body2" Style="color: var(--mud-palette-text-disabled);">try.mudblazor.com</MudText>
+                            </MudPaper>
+                        </div>
+                        <div class="flex-grow-0 px-1 d-none d-sm-flex">
+                            <MudIconButton Icon="@Icons.Material.Filled.Remove" Size="Size.Small" Class="pa-2" Disabled="true" />
+                            <MudIconButton Icon="@Icons.Material.Filled.CropSquare" Size="Size.Small" Class="pa-2" Disabled="true" />
+                            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Class="pa-2" Disabled="true" />
+                        </div>
+                    </div>
+                    <MudDivider />
+                    <div class="d-flex flex-column flex-sm-row">
+                        <div class="d-flex try-codeblock-editor">
+                            <IndexCodeBlock />
+                        </div>
+                        <MudDivider Vertical="true" FlexItem="true" />
+                        <div class="d-flex flex-grow-1">
+                            <div class="pt-6 pb-16 px-8">
+                                <MudCard Elevation="25" Class="rounded-lg">
+                                    <MudCardMedia Image="/images/door.jpg" Height="200" />
+                                    <MudCardContent>
+                                        <MudText Typo="Typo.h5">Old Paint</MudText>
+                                        <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+                                        <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                                    </MudCardContent>
+                                </MudCard>
+                            </div>
+                        </div>
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" Class="my-16">
+                <MudGrid Spacing="5" Class="my-16">
+                    <MudItem xs="12" sm="4">
+                        <div class="d-flex justify-center">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Outlined.Beenhere" Class="try-index-landing-icons" Style="height: 96px; width: 96px;" />
+                        </div>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary" Class="mt-8 mb-3" Style="font-weight:500;">Save your work</MudText>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mud-text-secondary">
+                            Save your code snippets anonymously and share the generated url with anyone.
+                        </MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <div class="d-flex justify-center">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Outlined.Share" Class="try-index-landing-icons" Style="height: 96px; width: 96px;" />
+                        </div>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary" Class="mt-8 mb-3" Style="font-weight:500;">Made for you</MudText>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mud-text-secondary">
+                            TryMudBlazor is here to help you, experiment, get help, and learn MudBlazor.
+                        </MudText>
+                    </MudItem>
+                    <MudItem xs="12" sm="4">
+                        <div class="d-flex justify-center">
+                            <MudIcon Color="Color.Primary" Icon="@Icons.Material.Outlined.FavoriteBorder" Class="try-index-landing-icons" Style="height: 96px; width: 96px;" />
+                        </div>
+                        <MudText Typo="Typo.h5" Align="Align.Center" Color="Color.Primary" Class="mt-8 mb-3" Style="font-weight:500;">Share some love</MudText>
+                        <MudText Typo="Typo.h6" Align="Align.Center" Class="mud-text-secondary">
+                            See someone having trouble with Blazor? Help them out and send them a snippet link or work together.
+                        </MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudMainContent>
+
+<style>
+    .fade-in-text {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out; /* Adjust duration and easing as needed */
+    }
+
+        .fade-in-text.fade-in {
+            opacity: 1;
+        }
+</style>
 
 @code {
-    private string _avatarLink = "https://www.gravatar.com/avatar/";
-    private IEnumerable<Claim> _userClaims;
-
-    protected override async Task OnInitializedAsync()
+    private bool isVisible = false;
+    private static bool _initialized = false; // Static variable to ensure one-time initialization
+    private List<string> IntoMessagesList = new()
     {
-        //Hello
+        "Mod responsibly",
+        "Now 38% less likely to explode",
+        "Keep calm and respawn",
+        "Powered by: space duct tape",
+        "<Insert plugin here>",
+        "Observe as reality bends under poorly tested code",
+        "Please don't touch that button",
+        "Push button, receive plugins. Maybe",
+        "For when regular modding feels too safe",
+        "Your Mods. Our Problem.",
+        "Where Mods Go to Live… or Crash.",
+        "Now With Extra Spaghetti Code!"
+    };
 
-        var authState = await authProvider.GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity.IsAuthenticated)
-        {
-            _userClaims = user.Claims;
-
-            _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
-        }
+    private string RandomInroMessage;
 
 
+    protected override void OnAfterRender(bool firstRender)
+    {
 
-
-
+        base.OnAfterRender(firstRender);
     }
+
+    protected override void OnInitialized()
+    {
+        if (RandomInroMessage == null)
+        {
+            var rng = new Random();
+            RandomInroMessage = IntoMessagesList[rng.Next(IntoMessagesList.Count)];
+            _initialized = true; // Set flag to true after initialization
+            // If needed, you can trigger any additional logic here or call StateHasChanged to update the UI
+            StateHasChanged();
+        }
+    }
+
+    // Handle the client render and prevent resetting the message on client-side render
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender) // Ensure this only runs on the first render on the client
+        {
+           
+        }
+    }
+
+
 
 }
