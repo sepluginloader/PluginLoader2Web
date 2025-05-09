@@ -17,7 +17,6 @@ namespace PluginLoader2Web.Components.Account
 
             accountGroup.MapPost("/PerformExternalLogin", (
                 HttpContext context,
-                [FromForm] string provider,
                 [FromForm] string returnUrl) =>
             {
                 IEnumerable<KeyValuePair<string, StringValues>> query = [
@@ -35,7 +34,7 @@ namespace PluginLoader2Web.Components.Account
                 };
 
 
-                return Results.Challenge(properties, new[] { provider });
+                return Results.Challenge(properties, new[] { "GitHub" });
             });
 
 

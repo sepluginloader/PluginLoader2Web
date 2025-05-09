@@ -1,5 +1,9 @@
-﻿@page "/"
+﻿@using System.Security.Claims
+
+@page "/"
 @rendermode InteractiveServer
+
+@inject AuthenticationStateProvider authProvider
 
 <PageTitle>Home</PageTitle>
 
@@ -156,7 +160,7 @@
         base.OnAfterRender(firstRender);
     }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (RandomInroMessage == null)
         {
@@ -166,6 +170,9 @@
             // If needed, you can trigger any additional logic here or call StateHasChanged to update the UI
             StateHasChanged();
         }
+
+
+      
     }
 
     // Handle the client render and prevent resetting the message on client-side render

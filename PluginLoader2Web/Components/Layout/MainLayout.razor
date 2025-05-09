@@ -1,4 +1,10 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+
+@inherits LayoutComponentBase
+@inject IAuthenticationSchemeProvider SchemeProvider
+@inject AuthenticationStateProvider authProvider
 
 
 <MudThemeProvider @ref="@_mudThemeProvider" Theme="@_themeManager.Theme" @bind-IsDarkMode="@_isDarkMode" />
@@ -7,27 +13,49 @@
 <MudSnackbarProvider />
 
 
-<MudLayout>
+<MudLayout Style="overflow:hidden; position:relative;">
     <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
     <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" IsDarkMode="@_isDarkMode" />
 
-
-
-
-
-
-
-
-    <MudAppBar Elevation="_themeManager.AppBarElevation">
+    <MudAppBar Elevation="_themeManager.AppBarElevation" Fixed="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudButton Variant="Variant.Text">Getting Started</MudButton>
         <MudButton Variant="Variant.Text">Plugins</MudButton>
         <MudButton Variant="Variant.Text">Docs</MudButton>
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
 
-        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+        <AuthorizeView>
+            <Authorized>
+                <MudMenu Label="@context.User.Identity.Name" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.KeyboardArrowDown">
+                    <MudMenuItem> Profile </MudMenuItem>
+                    <MudMenuItem> Settings </MudMenuItem>
+                    <MudMenuItem> Logout </MudMenuItem>
+                </MudMenu>
+
+
+             
+                <MudAvatar Style="margin-left: 10px;">
+                    <MudImage Src="@_avatarLink"></MudImage>
+                </MudAvatar>
+            </Authorized>
+
+            <NotAuthorized>
+                 <form class="form-horizontal" action="Account/PerformExternalLogin" method="post">
+                    <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
+                    <AntiforgeryToken />
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" DropShadow="false" Class="px-6" StartIcon="@Icons.Custom.Brands.GitHub" OnClick="@((e) => LoginGithub())">Login </MudButton>
+                </form>
+            </NotAuthorized>
+
+
+        </AuthorizeView>
+
+
+
+
+
     </MudAppBar>
+
 
     <MudMainContent Class="mt-16 pa-4">
 
@@ -42,18 +70,26 @@
             @Body
         }
 
-   
+
 
 
     </MudMainContent>
+
+
+
+
 
 </MudLayout>
 
 @code {
 
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
+    private AuthenticationScheme GithubLogin;
+    private string? ReturnUrl { get; set; }
+
     public bool _themeManagerOpen = false;
 
+    private bool _openEnd;
     private bool _drawerOpen = true;
     private MudTheme _theme = new MudTheme()
         {
@@ -73,6 +109,8 @@
     private MudThemeProvider _mudThemeProvider;
 
 
+    private IEnumerable<Claim> _userClaims;
+    private string _avatarLink = "https://www.gravatar.com/avatar/";
     private bool _LoadingData = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -85,8 +123,30 @@
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+
+        //_mudThemeProvider = (await SchemeProvider.GetAllSchemesAsync()).Where(s => !string.IsNullOrEmpty(s.DisplayName)).ToArray();
+        GithubLogin = await SchemeProvider.GetSchemeAsync("GitHub");
 
 
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _userClaims = user.Claims;
+
+            _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
+        }
+
+    }
+
+
+    private void ToggleStartDrawer()
+    {
+        _openEnd = !_openEnd;
+    }
 
     private void DrawerToggle()
     {
@@ -105,9 +165,9 @@
         StateHasChanged();
     }
 
-    protected override void OnInitialized()
+    private void LoginGithub()
     {
-        StateHasChanged();
+        
     }
 
 }
