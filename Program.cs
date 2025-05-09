@@ -1,4 +1,7 @@
+using Blazored.SessionStorage;
 using FluentMigrator.Runner;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 using PluginLoader2Web.Components;
@@ -39,7 +42,10 @@ namespace PluginLoader2Web
             builder.Services.AddRazorComponents().AddInteractiveServerComponents();
             builder.Services.AddCascadingAuthenticationState();
             builder.Services.AddAuthorization();
+            builder.Services.AddBlazoredSessionStorage();
 
+
+            /* SQL Services and Migrator */
             builder.Services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
@@ -48,9 +54,23 @@ namespace PluginLoader2Web
                 .AddLogging(lb => lb.AddFluentMigratorConsole());
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(MainConfigs.WebServer.ConnectionString));
-            //builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            var app = builder.Build();
+
+            /* Web Authentication */
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddCookie(options =>
+               {
+                   options.Cookie.Name = "authToken";
+                   options.LoginPath = "/Login";
+                   options.ExpireTimeSpan = TimeSpan.FromMinutes(10);
+                   options.AccessDeniedPath = "/Account/AccessDenied";
+               }).AddGitHub()
+
+
+
+
+
+           var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -61,8 +81,7 @@ namespace PluginLoader2Web
             }
 
 
-                app.UseHttpsRedirection();
-
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAntiforgery();
 
