@@ -8,6 +8,14 @@ namespace PluginLoader2Web.Data.Migrations
         /// <inheritdoc />
         public override void Up()
         {
+            Create.Table("UserAccounts")
+                .WithColumn("UserId").AsInt64().PrimaryKey()
+                .WithColumn("Username").AsString(256).NotNullable()
+                .WithColumn("Email").AsString(256).NotNullable()
+                .WithColumn("Role").AsByte().NotNullable();
+
+
+
             // PluginProjects table
             Create.Table("PluginProjects")
                 .WithColumn("PluginId").AsGuid().PrimaryKey()   // Private unique identifier for the plugin

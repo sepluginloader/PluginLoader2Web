@@ -26,21 +26,28 @@
 
         <AuthorizeView>
             <Authorized>
+
+                
+
+
+
                 <MudMenu Label="@context.User.Identity.Name" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.KeyboardArrowDown">
                     <MudMenuItem> Profile </MudMenuItem>
                     <MudMenuItem> Settings </MudMenuItem>
-                    <MudMenuItem> Logout </MudMenuItem>
+                    <MudMenuItem Href="Account/Logout"> Logout </MudMenuItem>
                 </MudMenu>
 
 
-             
+
+
+
                 <MudAvatar Style="margin-left: 10px;">
                     <MudImage Src="@_avatarLink"></MudImage>
                 </MudAvatar>
             </Authorized>
 
             <NotAuthorized>
-                 <form class="form-horizontal" action="Account/PerformExternalLogin" method="post">
+                <form class="form-horizontal" action="Account/PerformExternalLogin" method="post">
                     <input type="hidden" name="ReturnUrl" value="@ReturnUrl" />
                     <AntiforgeryToken />
                     <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" DropShadow="false" Class="px-6" StartIcon="@Icons.Custom.Brands.GitHub" OnClick="@((e) => LoginGithub())">Login </MudButton>
@@ -55,6 +62,9 @@
 
 
     </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
 
 
     <MudMainContent Class="mt-16 pa-4">
@@ -85,7 +95,7 @@
 
     private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
     private AuthenticationScheme GithubLogin;
-    private string? ReturnUrl { get; set; }
+    private string? ReturnUrl { get; set; } = "";
 
     public bool _themeManagerOpen = false;
 
@@ -111,6 +121,8 @@
 
     private IEnumerable<Claim> _userClaims;
     private string _avatarLink = "https://www.gravatar.com/avatar/";
+    private string _RoleName;
+
     private bool _LoadingData = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -129,13 +141,14 @@
         //_mudThemeProvider = (await SchemeProvider.GetAllSchemesAsync()).Where(s => !string.IsNullOrEmpty(s.DisplayName)).ToArray();
         GithubLogin = await SchemeProvider.GetSchemeAsync("GitHub");
 
-
+        
         var authState = await authProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user.Identity.IsAuthenticated)
         {
             _userClaims = user.Claims;
+            _RoleName = _userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role.ToString()).Value;
 
             _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
         }
