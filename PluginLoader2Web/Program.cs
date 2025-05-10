@@ -50,11 +50,11 @@ namespace PluginLoader2Web
             builder.Services.AddFluentMigratorCore()
                 .ConfigureRunner(rb => rb
                     .AddPostgres()
-                    .WithGlobalConnectionString(MainConfigs.WebServer.ConnectionString)
+                    .WithGlobalConnectionString(MainConfigs.Database.ConnectionString)
                     .ScanIn(typeof(App).Assembly).For.Migrations())
                 .AddLogging(lb => lb.AddFluentMigratorConsole());
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(MainConfigs.WebServer.ConnectionString));
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(MainConfigs.Database.ConnectionString));
 
 
             /* Web Authentication */
@@ -67,8 +67,8 @@ namespace PluginLoader2Web
                    options.AccessDeniedPath = "/Account/AccessDenied";
                }).AddGitHub(githubOptions =>
                {
-                   githubOptions.ClientId = MainConfigs.GithubOAuth.ClientID;
-                   githubOptions.ClientSecret = MainConfigs.GithubOAuth.ClientSecret;
+                   githubOptions.ClientId = MainConfigs.Github.ClientID;
+                   githubOptions.ClientSecret = MainConfigs.Github.ClientSecret;
                    githubOptions.Scope.Add("user:email");
                    githubOptions.SaveTokens = true;
                    

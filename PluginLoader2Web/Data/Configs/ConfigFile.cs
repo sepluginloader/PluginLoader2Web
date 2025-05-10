@@ -8,25 +8,25 @@ namespace PluginLoader2Web.Data.Configs
 {
     public class ConfigFile : ITomlMetadataProvider
     {
-        private string filePath;
+        private string? filePath;
 
-        public SQLCredentialsCfgs WebServer { get; set; } = new SQLCredentialsCfgs();
+        public SQLCredentialsCfgs Database { get; set; } = new SQLCredentialsCfgs();
 
-        public GithubOAuthCfgs GithubOAuth { get; set; } = new GithubOAuthCfgs();
+        public GithubOAuthCfgs Github { get; set; } = new GithubOAuthCfgs();
 
         public Task SaveAsync()
         {
-            return File.WriteAllTextAsync(filePath, Toml.FromModel(this));
+            return File.WriteAllTextAsync(filePath!, Toml.FromModel(this));
         }
 
         public void Save()
         {
-            File.WriteAllText(filePath, Toml.FromModel(this));
+            File.WriteAllText(filePath!, Toml.FromModel(this));
         }
 
-        public static async Task<ConfigFile> TryLoadAsync(string filePath)
+        public static async Task<ConfigFile?> TryLoadAsync(string filePath)
         {
-            string folder = Path.GetDirectoryName(filePath);
+            string? folder = Path.GetDirectoryName(filePath);
             if (!string.IsNullOrWhiteSpace(folder))
                 Directory.CreateDirectory(folder);
 
@@ -62,13 +62,13 @@ namespace PluginLoader2Web.Data.Configs
                 IgnoreMissingProperties = true,
             };
 
-            if (!documentSyntax.TryToModel(out config, out DiagnosticsBag diagnostics, modelOptions))
+            if (!documentSyntax.TryToModel(out ConfigFile? existingConfig, out DiagnosticsBag diagnostics, modelOptions))
             {
                 Console.WriteLine(DiagnosticsToString("Errors were found in the config file: ", diagnostics));
-                config = null;
                 return null;
             }
 
+            config = existingConfig;
             config.filePath = filePath;
             await config.SaveAsync();
             return config;
@@ -85,6 +85,6 @@ namespace PluginLoader2Web.Data.Configs
 
 
         [IgnoreDataMember]
-        public TomlPropertiesMetadata PropertiesMetadata { get; set; }
+        public TomlPropertiesMetadata? PropertiesMetadata { get; set; }
     }
 }

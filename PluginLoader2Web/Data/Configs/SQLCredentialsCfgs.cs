@@ -1,6 +1,9 @@
-﻿namespace PluginLoader2Web.Data.Configs
+﻿using System.Runtime.Serialization;
+using Tomlyn.Model;
+
+namespace PluginLoader2Web.Data.Configs
 {
-    public class SQLCredentialsCfgs
+    public class SQLCredentialsCfgs : ITomlMetadataProvider
     {
 
         public string SQLHost { get; set; } = "localhost";
@@ -17,5 +20,7 @@
         public string ConnectionString => $"Host={SQLHost};Port={Port};Database={Database};Username={Username};Password={Password};Include Error Detail=true";
 
 
+        [IgnoreDataMember]
+        public TomlPropertiesMetadata? PropertiesMetadata { get; set; }
     }
 }
