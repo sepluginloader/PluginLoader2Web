@@ -30,7 +30,7 @@
         <AuthorizeView>
             <Authorized>
 
-                
+
 
 
 
@@ -104,19 +104,9 @@
 
     private bool _openEnd;
     private bool _drawerOpen = true;
-    private MudTheme _theme = new MudTheme()
-        {
-            PaletteDark = new PaletteDark()
-            {
-                Primary = "#6200EE",
-                Secondary = "#03DAC6",
-                Background = "#F5F5F5",
-                AppbarBackground = "#6200EE",
-                AppbarText = "#FFFFFF",
-            },
 
 
-        };
+
 
     private bool _isDarkMode = true;
     private MudThemeProvider _mudThemeProvider;
@@ -134,6 +124,10 @@
         {
 
             _LoadingData = false;
+
+            //Temp theme colors
+            _mudThemeProvider.Theme.PaletteDark.Background = "#1e1e28ff";
+            _mudThemeProvider.Theme.PaletteDark.Primary = "#e1824bff";
             StateHasChanged();
         }
     }
@@ -144,7 +138,7 @@
         //_mudThemeProvider = (await SchemeProvider.GetAllSchemesAsync()).Where(s => !string.IsNullOrEmpty(s.DisplayName)).ToArray();
         GithubLogin = await SchemeProvider.GetSchemeAsync("GitHub");
 
-        
+
         var authState = await authProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -155,6 +149,8 @@
 
             _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
         }
+
+        
 
     }
 
