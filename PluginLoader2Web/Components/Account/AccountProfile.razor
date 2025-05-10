@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using System.Security.Claims
+@using PluginLoader2Web.Data;
+@using PluginLoader2Web.Data.Models;
+
+@page "/Account/Profile"
+
+@inject ApplicationDbContext DbContext
+@inject AuthenticationStateProvider authProvider
+
+<AuthorizeView>
+    <Authorized>
+
+
+        <MudContainer Class="my-16" MaxWidth="MaxWidth.Large">
+
+            <MudGrid Spacing="10">
+                <MudItem xs="12" xl="4">
+                    <div style="display: flex; justify-content: center;">
+                        <MudImage Src="@_avatarLink"
+                        Alt="Mony the dog"
+                        Elevation="25"
+                        ObjectFit="ObjectFit.Contain"
+                        Style="height: 100%; max-height:200px;  border-radius: 100px;"/>
+
+                    </div>
+
+
+                </MudItem>
+                <MudItem xs="12" xl="8">
+                    <MudText Typo="Typo.h5">Account Information:</MudText>
+                    <MudPaper Class="mud-width-full py-8">
+                        <div style="margin-left: 16px; margin-right: 16px;">
+                            <!-- Username -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">Username:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.Username</MudText>
+                            </div>
+                            <!-- Email -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">Email:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.Email</MudText>
+                            </div>
+                            <!-- GitHub Account ID -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">GitHub Account ID:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.GithubID</MudText>
+                            </div>
+                            <!-- Linked Discord Account ID -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">Linked Discord Account ID:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.DiscordID</MudText>
+                            </div>
+                            <!-- Join Date -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">Join Date:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.JoinDate.ToShortDateString()</MudText>
+                            </div>
+                            <!-- Last Update -->
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                <MudText Typo="Typo.body1" Class="font-weight-bold">Last Update:</MudText>
+                                <MudText Typo="Typo.body1">@_myUserAccount.LastUpdate.ToShortDateString()</MudText>
+                            </div>
+                        </div>
+                    
+
+                    </MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=6</MudPaper>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=6</MudPaper>
+                </MudItem>
+                <MudItem xs="6">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=6</MudPaper>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+                </MudItem>
+                <MudItem xs="3">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-8">xs=3</MudPaper>
+                </MudItem>
+            </MudGrid>
+
+        </MudContainer>
+
+
+
+
+    </Authorized>
+
+    <NotAuthorized>
+        <MudText Typo="Typo.h6" GutterBottom="true">Hello, Guest!</MudText>
+        <MudText Typo="Typo.body2">
+            You are not logged in. Please log in to access the full features of this application.
+        </MudText>
+    </NotAuthorized>
+
+
+</AuthorizeView>
+
+
+
+
+@code {
+
+    private IEnumerable<Claim> _userClaims;
+    private string _avatarLink = "https://www.gravatar.com/avatar/";
+    private string _RoleName;
+
+    private ulong GithubID;
+
+    private UserAccountItem _myUserAccount;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        var authState = await authProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            _userClaims = user.Claims;
+            _RoleName = _userClaims.FirstOrDefault(x => x.Type == ClaimTypes.Role.ToString()).Value;
+            GithubID = ulong.Parse(_userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier.ToString()).Value);
+            _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
+
+            _myUserAccount = DbContext.UserAccounts.FirstOrDefault(p => p.GithubID == GithubID);
+        }
+
+
+        return;
+    }
+}

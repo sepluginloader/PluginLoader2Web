@@ -18,7 +18,7 @@ namespace PluginLoader2Web.Data
 
         public async Task<UserAccountItem?> TryFindUser(ulong userId)
         {
-            return await UserAccounts.FirstOrDefaultAsync(x => x.UserId == userId);
+            return await UserAccounts.FirstOrDefaultAsync(x => x.GithubID == userId);
         }
 
 

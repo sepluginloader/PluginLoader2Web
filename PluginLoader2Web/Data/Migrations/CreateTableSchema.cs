@@ -8,13 +8,15 @@ namespace PluginLoader2Web.Data.Migrations
         /// <inheritdoc />
         public override void Up()
         {
+            //Web Users. Only store email, username etc.
             Create.Table("UserAccounts")
-                .WithColumn("UserId").AsInt64().PrimaryKey()
-                .WithColumn("Username").AsString(256).NotNullable()
-                .WithColumn("Email").AsString(256).NotNullable()
-                .WithColumn("Role").AsByte().NotNullable();
-
-
+                .WithColumn("GithubID").AsInt64().PrimaryKey() //This is a unique userid
+                .WithColumn("DiscordID").AsInt64().Nullable() //Possible Link DiscordID
+                .WithColumn("Username").AsString(256).NotNullable() //Store username
+                .WithColumn("Email").AsString(256).NotNullable() //Possible email updates?
+                .WithColumn("Role").AsByte().NotNullable() //Role based authorization for certain pages
+                .WithColumn("JoinDate").AsDateTime().NotNullable() //Website JoinDate? May be useful
+                .WithColumn("LastUpdate").AsDateTime().NotNullable(); //Last Plugin Update to see if they have been online
 
             // PluginProjects table
             Create.Table("PluginProjects")
