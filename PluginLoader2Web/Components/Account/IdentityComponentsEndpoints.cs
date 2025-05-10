@@ -34,6 +34,14 @@ namespace PluginLoader2Web.Components.Account
             accountGroup.MapGet("/ExternalLogin", HandleExternalLogin);
             accountGroup.MapGet("/Logout", Logout);
 
+            var PluginsGroup = endpoints.MapGroup("/Plugins");
+#if DEBUG
+            PluginsGroup.MapGet("/GenerateData", GenerateRandomPluginData);
+#endif
+
+
+
+
             return accountGroup;
         }
 
@@ -137,6 +145,36 @@ namespace PluginLoader2Web.Components.Account
                 returnUrl = "/";
             await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return Results.Redirect(returnUrl);
+        }
+
+        private static async Task<IResult> GenerateRandomPluginData(HttpContext context)
+        {
+            // Generate random plugin data and save it to the database
+            // This is just a placeholder for your actual implementation
+
+            ApplicationDbContext DbContext = context.RequestServices.GetService<ApplicationDbContext>();
+
+
+            for(int i = 0; i <= 10; i++)
+            {
+
+                PluginProjectItem newPlugin = new PluginProjectItem();
+                newPlugin.Name = $"Plugin {i}";
+                newPlugin.AuthorID = 52760019;
+                newPlugin.ToolTip = $"This is a tooltip for Plugin {i}";
+                newPlugin.LongDescription = $"This is a long description for Plugin {i}.";
+                newPlugin.RepoURL = "www.google.com";
+
+
+                DbContext.PluginProjects.Add(newPlugin);
+
+
+
+            }
+
+            await DbContext.SaveChangesAsync();
+
+            return Results.Ok("Random plugin data generated successfully.");
         }
     }
 }

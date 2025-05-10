@@ -19,8 +19,11 @@
 
     <MudAppBar Elevation="_themeManager.AppBarElevation" Fixed="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+
+
+        <MudButton Href="/" Variant="Variant.Text">Home</MudButton>
         <MudButton Variant="Variant.Text">Getting Started</MudButton>
-        <MudButton Variant="Variant.Text">Plugins</MudButton>
+        <MudButton Href="/SE2/Plugins" Variant="Variant.Text">Plugins</MudButton>
         <MudButton Variant="Variant.Text">Docs</MudButton>
         <MudSpacer />
 

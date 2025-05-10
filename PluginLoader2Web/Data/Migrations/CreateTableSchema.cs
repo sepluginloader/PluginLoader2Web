@@ -23,7 +23,9 @@ namespace PluginLoader2Web.Data.Migrations
                 .WithColumn("AuthorID").AsInt64().NotNullable() // Username of the plugin author
                 .WithColumn("ToolTip").AsString().NotNullable()
                 .WithColumn("LongDescription").AsString().NotNullable()
-                .WithColumn("RepoURL").AsString().NotNullable();
+                .WithColumn("RepoURL").AsString().NotNullable()
+                .WithColumn("CreatedAt").AsDateTime().NotNullable() // Date when the plugin was created
+                .WithColumn("CommunitySpotlight").AsBoolean().NotNullable(); // Flag for community spotlight
 
             // PluginProjectVersions table
             Create.Table("PluginProjectVersions")

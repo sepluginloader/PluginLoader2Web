@@ -10,6 +10,7 @@ namespace PluginLoader2Web.Data.Models
         public PluginProjectItem()
         {
             PluginId = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
         }
 
 
@@ -28,5 +29,9 @@ namespace PluginLoader2Web.Data.Models
         public string LongDescription { get; set; } = string.Empty;
 
         public string RepoURL { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; }
+
+        public bool CommunitySpotlight { get; set; } = false;
     }
 }

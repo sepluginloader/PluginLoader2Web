@@ -1,0 +1,90 @@
+﻿@using PluginLoader2Web.Data;
+@using PluginLoader2Web.Data.Models;
+
+@page "/SE2/Plugins"
+@inject ApplicationDbContext DbContext
+
+<MudContainer Class="my-16" MaxWidth="MaxWidth.Large">
+    <MudGrid Spacing="10">
+
+        <!-- MudText in one column -->
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.h3">
+                Community Spotlight
+            </MudText>
+
+            <MudText Typo="Typo.h5" Class="mud-text-secondary ml-2 my-2 ">
+                <i>Our most recommended plugins!</i>
+
+            </MudText>
+        </MudItem>
+
+        <!-- MudCarousel in another column -->
+        <MudItem xs="12" sm="8">
+            <MudCarousel Class="mud-width-full" Style="height:200px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true" AutoCycle="true" TData="object">
+                @foreach (var project in _spotlightProjects)
+                {
+
+                    <MudCarouselItem Transition="Transition.Slide">
+                        <MudCard >
+
+                            <MudCardContent Style="height:150px; overflow:auto;">
+                                <MudText Typo="Typo.h5" Color="Color.Primary">@project.Name</MudText>
+                                <MudText Typo="Typo.body2">@project.LongDescription</MudText>
+                                <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                            </MudCardContent>
+                            <MudCardActions>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                            </MudCardActions>
+                        </MudCard>
+                    </MudCarouselItem>
+                }
+            </MudCarousel>
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudGrid Justify="Justify.SpaceEvenly">
+                @foreach (var project in DbContext.PluginProjects)
+                {
+
+
+                    <MudCard Class="d-flex flex-column align-center justify-center mud-width-full py-8">
+
+                                <MudCardContent Style="height:150px; overflow:auto;">
+                                    <MudText Typo="Typo.h5" Color="Color.Primary">@project.Name</MudText>
+                                    <MudText Typo="Typo.body2">@project.LongDescription</MudText>
+                                    <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+                                </MudCardContent>
+                                <MudCardActions>
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+                                    <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                                </MudCardActions>
+                            </MudCard>
+                        
+                    
+                }
+            </MudGrid>
+        </MudItem>
+
+    </MudGrid>
+
+</MudContainer>
+
+
+
+@code {
+    
+    List<PluginProjectItem> _spotlightProjects = new List<PluginProjectItem>();
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _spotlightProjects = DbContext.PluginProjects
+            .Where(p => p.CommunitySpotlight)
+            .ToList();
+        // Initialization logic here
+    }
+
+}
