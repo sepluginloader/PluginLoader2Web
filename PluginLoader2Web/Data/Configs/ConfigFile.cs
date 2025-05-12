@@ -14,6 +14,8 @@ namespace PluginLoader2Web.Data.Configs
 
         public GithubOAuthCfgs Github { get; set; } = new GithubOAuthCfgs();
 
+        public WebServerCfgs Web { get; set; } = new WebServerCfgs();
+
         public Task SaveAsync()
         {
             return File.WriteAllTextAsync(filePath!, Toml.FromModel(this));
@@ -45,7 +47,7 @@ namespace PluginLoader2Web.Data.Configs
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error occurred while reading the config: ", e);
+                Log.Error("Error occurred while reading the config: ", e);
                 return null;
             }
 
@@ -53,7 +55,7 @@ namespace PluginLoader2Web.Data.Configs
             DocumentSyntax documentSyntax = Toml.Parse(fileText, filePath);
             if (documentSyntax.HasErrors)
             {
-                Console.WriteLine(DiagnosticsToString("Syntax errors were found in the config file: ", documentSyntax.Diagnostics));
+                Log.Error(DiagnosticsToString("Syntax errors were found in the config file: ", documentSyntax.Diagnostics));
                 return null;
             }
 
@@ -64,7 +66,7 @@ namespace PluginLoader2Web.Data.Configs
 
             if (!documentSyntax.TryToModel(out ConfigFile? existingConfig, out DiagnosticsBag diagnostics, modelOptions))
             {
-                Console.WriteLine(DiagnosticsToString("Errors were found in the config file: ", diagnostics));
+                Log.Error(DiagnosticsToString("Errors were found in the config file: ", diagnostics));
                 return null;
             }
 

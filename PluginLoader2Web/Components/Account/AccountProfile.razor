@@ -6,7 +6,7 @@
 
 @page "/Account/Profile"
 
-@inject ApplicationDbContext DbContext
+@inject DatabaseService db
 @inject AuthenticationStateProvider authProvider
 
 <AuthorizeView>
@@ -129,7 +129,8 @@
             GithubID = ulong.Parse(_userClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier.ToString()).Value);
             _avatarLink = $"https://avatars.githubusercontent.com/u/{_userClaims.ToArray()[0].Value}?v=4.png";
 
-            _myUserAccount = DbContext.UserAccounts.FirstOrDefault(p => p.GithubID == GithubID);
+            using (ApplicationDbContext dbContext = db.OpenConnection())
+                _myUserAccount = dbContext.UserAccounts.FirstOrDefault(p => p.GithubID == GithubID);
         }
 
 

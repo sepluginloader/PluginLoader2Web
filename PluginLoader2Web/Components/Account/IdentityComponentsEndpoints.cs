@@ -96,7 +96,8 @@ namespace PluginLoader2Web.Components.Account
 
 
             /* Perform DB Lookup */
-            ApplicationDbContext myDatabase = context.RequestServices.GetService<ApplicationDbContext>();
+
+            using ApplicationDbContext myDatabase = context.RequestServices.GetService<DatabaseService>()!.OpenConnection();
 
             string NameIdentifier = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
             ulong userId = ulong.Parse(NameIdentifier);
@@ -113,7 +114,7 @@ namespace PluginLoader2Web.Components.Account
                 myDatabase.Add(newUser);
                 await myDatabase.SaveChangesAsync();
 
-                Console.WriteLine($"User {userId} not found in database. Creating new user.");
+                Log.Info($"User {userId} not found in database. Creating new user.");
             }
             else
             {
@@ -152,8 +153,8 @@ namespace PluginLoader2Web.Components.Account
             // Generate random plugin data and save it to the database
             // This is just a placeholder for your actual implementation
 
-            ApplicationDbContext DbContext = context.RequestServices.GetService<ApplicationDbContext>();
-
+            using ApplicationDbContext dbContext = context.RequestServices.GetService<DatabaseService>()!.OpenConnection();
+            
 
             for(int i = 0; i <= 10; i++)
             {
@@ -166,13 +167,13 @@ namespace PluginLoader2Web.Components.Account
                 newPlugin.RepoURL = "www.google.com";
 
 
-                DbContext.PluginProjects.Add(newPlugin);
+                dbContext.PluginProjects.Add(newPlugin);
 
 
 
             }
 
-            await DbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
             return Results.Ok("Random plugin data generated successfully.");
         }

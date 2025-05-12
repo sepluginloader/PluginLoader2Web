@@ -6,14 +6,26 @@ namespace PluginLoader2Web.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        private readonly string connectionString;
+
+        public ApplicationDbContext(string connectionString)
         {
+            this.connectionString = connectionString;
+            this.SaveChangesFailed += SQLServer_SaveChangesFailed;
+        }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseNpgsql(connectionString);
+        }
 
+        private void SQLServer_SaveChangesFailed(object? sender, SaveChangesFailedEventArgs e)
+        {
+            Log.Error($"Failed to save changes to the database! {e.Exception}");
         }
 
         public DbSet<PluginProjectItem> PluginProjects { get; set; }
-        public DbSet<PluginVersionItem> UserAccountPolicys { get; set; }
+        public DbSet<PluginVersionItem> UserAccountPolicies { get; set; }
         public DbSet<UserAccountItem> UserAccounts { get; set; }
 
         public async Task<UserAccountItem?> TryFindUser(ulong userId)

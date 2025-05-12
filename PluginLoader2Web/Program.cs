@@ -1,6 +1,7 @@
 using Blazored.SessionStorage;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Hosting.Systemd;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
@@ -15,26 +16,33 @@ namespace PluginLoader2Web
     public class Program
     {
         public static string AppFolder = AppContext.BaseDirectory;
-        public static ConfigFile MainConfigs;
 
 
         public static async Task Main(string[] args)
         {
-            WebApplicationBuilder? builder = WebApplication.CreateBuilder(args);
-           
+            Log.Init(Path.Combine(AppFolder, "logs", "pluginloader.log"));
 
-            MainConfigs = await ConfigFile.TryLoadAsync(Path.Combine(AppFolder, "ServerConfigs.toml"));
-            
+            ConfigFile? config = await ConfigFile.TryLoadAsync(Path.Combine(AppFolder, "ServerConfigs.toml"));
+            if (config == null)
+                return;
 
-            //Build Web Services
-            await BuildServicesAsync(builder, args);
+            DatabaseService database = new DatabaseService(config.Database);
+            await database.InitDatabase();
 
-
+            await RunWebServer(config, database);
         }
 
-        public static async Task BuildServicesAsync(WebApplicationBuilder builder, string[] args)
+        public static async Task RunWebServer(ConfigFile config, DatabaseService db)
         {
-    
+            ResetEnvironment(); // We use ConfigFile for all settings
+            WebApplicationBuilder builder = WebApplication.CreateBuilder([]);
+            builder.Configuration.Sources.Clear();
+
+            Log.Link(builder.Host, "Web");
+
+            config.Web.ApplySettings(builder);
+
+            builder.Host.UseSystemd();
 
             // Add MudBlazor services
             builder.Services.AddMudServices();
@@ -47,15 +55,7 @@ namespace PluginLoader2Web
 
 
             /* SQL Services and Migrator */
-            builder.Services.AddFluentMigratorCore()
-                .ConfigureRunner(rb => rb
-                    .AddPostgres()
-                    .WithGlobalConnectionString(MainConfigs.Database.ConnectionString)
-                    .ScanIn(typeof(App).Assembly).For.Migrations())
-                .AddLogging(lb => lb.AddFluentMigratorConsole());
-
-            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(MainConfigs.Database.ConnectionString));
-
+            builder.Services.AddSingleton(db);
 
             /* Web Authentication */
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -67,51 +67,59 @@ namespace PluginLoader2Web
                    options.AccessDeniedPath = "/Account/AccessDenied";
                }).AddGitHub(githubOptions =>
                {
-                   githubOptions.ClientId = MainConfigs.Github.ClientID;
-                   githubOptions.ClientSecret = MainConfigs.Github.ClientSecret;
+                   githubOptions.ClientId = config.Github.ClientID;
+                   githubOptions.ClientSecret = config.Github.ClientSecret;
                    githubOptions.Scope.Add("user:email");
                    githubOptions.SaveTokens = true;
                    
                });
 
 
-
-
-
-            var app = builder.Build();
+            WebApplication app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                if (config.Web.Hsts && config.Web.HttpsPort > 0)
+                {
+                    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                    app.UseHsts();
+                    app.UseHttpsRedirection();
+                }
             }
 
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAntiforgery();
 
             app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
+            app.MapAdditionalIdentityEndpoints();
 
-            //Run the migration service
-            using (var scope = app.Services.CreateScope())
+            await app.RunAsync();
+        }
+
+        private static void ResetEnvironment()
+        {
+            string? appMode = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+            foreach (var env in Environment.GetEnvironmentVariables().Keys)
             {
-
-
-                var runner = scope.ServiceProvider.GetRequiredService<IMigrationRunner>();
-                runner.LoadVersionInfoIfRequired();
-                runner.MigrateUp();
-                runner.ListMigrations();
-                runner.ValidateVersionOrder();
-
-                await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().SaveChangesAsync();
+                if (env is string env_key && env_key.StartsWith("ASPNET"))
+                    Environment.SetEnvironmentVariable(env_key, null);
             }
 
-            app.MapAdditionalIdentityEndpoints();
-            app.Run();
+            if (string.IsNullOrWhiteSpace(appMode))
+            {
+#if DEBUG
+                Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+#endif
+            }
+            else
+            {
+                Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", appMode);
+            }
         }
     }
 }
